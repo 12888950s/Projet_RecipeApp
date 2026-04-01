@@ -1,0 +1,15 @@
+C:\Users\TUF\RecipeApp\RecipeApp.Services\bin\Debug\net10.0\RecipeApp.Services.deps.json
+C:\Users\TUF\RecipeApp\RecipeApp.Services\bin\Debug\net10.0\RecipeApp.Services.dll
+C:\Users\TUF\RecipeApp\RecipeApp.Services\bin\Debug\net10.0\RecipeApp.Services.pdb
+C:\Users\TUF\RecipeApp\RecipeApp.Services\bin\Debug\net10.0\RecipeApp.Data.dll
+C:\Users\TUF\RecipeApp\RecipeApp.Services\bin\Debug\net10.0\RecipeApp.Data.pdb
+C:\Users\TUF\RecipeApp\RecipeApp.Services\obj\Debug\net10.0\RecipeApp.Services.csproj.AssemblyReference.cache
+C:\Users\TUF\RecipeApp\RecipeApp.Services\obj\Debug\net10.0\RecipeApp.Services.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\TUF\RecipeApp\RecipeApp.Services\obj\Debug\net10.0\RecipeApp.Services.AssemblyInfoInputs.cache
+C:\Users\TUF\RecipeApp\RecipeApp.Services\obj\Debug\net10.0\RecipeApp.Services.AssemblyInfo.cs
+C:\Users\TUF\RecipeApp\RecipeApp.Services\obj\Debug\net10.0\RecipeApp.Services.csproj.CoreCompileInputs.cache
+C:\Users\TUF\RecipeApp\RecipeApp.Services\obj\Debug\net10.0\RecipeAp.195AA578.Up2Date
+C:\Users\TUF\RecipeApp\RecipeApp.Services\obj\Debug\net10.0\RecipeApp.Services.dll
+C:\Users\TUF\RecipeApp\RecipeApp.Services\obj\Debug\net10.0\refint\RecipeApp.Services.dll
+C:\Users\TUF\RecipeApp\RecipeApp.Services\obj\Debug\net10.0\RecipeApp.Services.pdb
+C:\Users\TUF\RecipeApp\RecipeApp.Services\obj\Debug\net10.0\ref\RecipeApp.Services.dll
