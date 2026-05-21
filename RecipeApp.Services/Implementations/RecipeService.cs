@@ -111,7 +111,7 @@ namespace RecipeApp.Services.Implementations
             if (recipe == null) return 0;
 
             return recipe.RecipeIngredients
-                .Sum(ri => ri.Quantity * ri.Ingredient.CaloriesPerUnit / 100);
+                .Sum(ri => ri.Quantity * ri.Ingredient.CaloriesPerUnit);
         }
 
         public async Task<float> GetCaloriesPerPersonAsync(int recipeId)
