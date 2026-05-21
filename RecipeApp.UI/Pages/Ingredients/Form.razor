@@ -1,0 +1,63 @@
+﻿@page "/ingredients/create"
+@page "/ingredients/edit/{Id:int}"
+@inject IIngredientService IngredientService
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<h2>@(Id == null ? "➕ Nouvel ingrédient" : "✏️ Modifier l'ingrédient")</h2>
+
+<EditForm Model="model" OnValidSubmit="SaveAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Nom</label>
+        <InputText class="form-control" @bind-Value="model.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label>Calories par unité</label>
+        <InputNumber class="form-control" @bind-Value="model.CaloriesPerUnit" />
+    </div>
+
+    <div class="mb-3">
+        <label>Unité (ex: 100g, pièce, ml)</label>
+        <InputText class="form-control" @bind-Value="model.Unit" />
+    </div>
+
+    <div class="mb-3">
+        <label>Description</label>
+        <InputTextArea class="form-control" @bind-Value="model.Description" rows="3" />
+    </div>
+
+    <button class="btn btn-success" type="submit">💾 Enregistrer</button>
+    <button class="btn btn-secondary ms-2" type="button"
+            @onclick='() => Nav.NavigateTo("/ingredients")'>
+        Annuler
+    </button>
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private Ingredient model = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != null)
+        {
+            var existing = await IngredientService.GetByIdAsync(Id.Value);
+            if (existing != null) model = existing;
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        if (Id == null)
+            await IngredientService.CreateAsync(model);
+        else
+            await IngredientService.UpdateAsync(Id.Value, model);
+
+        Nav.NavigateTo("/ingredients");
+    }
+}

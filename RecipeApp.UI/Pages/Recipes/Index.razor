@@ -1,0 +1,87 @@
+﻿@page "/recipes"
+@inject IRecipeService RecipeService
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<h2>🍽️ Recettes</h2>
+
+<div style="display:flex; gap:10px; margin-bottom:20px;">
+    <input class="form-control" placeholder="Rechercher une recette..."
+           @bind="searchTerm" @bind:event="oninput" @onkeyup="OnSearch" />
+    <button class="btn btn-primary" @onclick='() => Nav.NavigateTo("/recipes/create")'>
+        + Ajouter
+    </button>
+</div>
+
+@if (recipes == null)
+{
+    <p>Chargement...</p>
+}
+else if (!recipes.Any())
+{
+    <p>Aucune recette trouvée.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var recipe in recipes)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@recipe.Title</h5>
+                        <p class="card-text text-muted">@recipe.Description</p>
+                        <span class="badge bg-primary me-1">@recipe.Category</span>
+                        <span class="badge bg-secondary">@recipe.CuisineType</span>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <small>👤 @recipe.Servings pers. | ⏱️ @recipe.PrepTimeMinutes min</small>
+                        <div>
+                            <button class="btn btn-sm btn-info"
+                                    @onclick='() => Nav.NavigateTo($"/recipes/{recipe.Id}")'>
+                                👁️
+                            </button>
+                            <button class="btn btn-sm btn-warning"
+                                    @onclick='() => Nav.NavigateTo($"/recipes/edit/{recipe.Id}")'>
+                                ✏️
+                            </button>
+                            <button class="btn btn-sm btn-danger"
+                                    @onclick="() => DeleteAsync(recipe.Id)">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Recipe>? recipes;
+    private string searchTerm = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        recipes = await RecipeService.GetAllAsync();
+    }
+
+    private async Task OnSearch()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            await LoadAsync();
+        else
+            recipes = await RecipeService.SearchAsync(searchTerm);
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        await RecipeService.DeleteAsync(id);
+        await LoadAsync();
+    }
+}

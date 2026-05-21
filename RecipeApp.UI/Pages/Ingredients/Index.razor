@@ -1,0 +1,89 @@
+﻿@page "/ingredients"
+@inject IIngredientService IngredientService
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<h2>🥕 Ingrédients</h2>
+
+<!-- Barre de recherche -->
+<div style="display:flex; gap:10px; margin-bottom:20px;">
+    <input class="form-control" placeholder="Rechercher un ingrédient..."
+           @bind="searchTerm" @bind:event="oninput" @onkeyup="OnSearch" />
+    <button class="btn btn-primary" @onclick='() => Nav.NavigateTo("/ingredients/create")'>
+        + Ajouter
+    </button>
+</div>
+
+<!-- Table -->
+@if (ingredients == null)
+{
+    <p>Chargement...</p>
+}
+else if (!ingredients.Any())
+{
+    <p>Aucun ingrédient trouvé.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Calories/Unité</th>
+                <th>Unité</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ingredient in ingredients)
+            {
+                <tr>
+                    <td>@ingredient.Name</td>
+                    <td>@ingredient.CaloriesPerUnit</td>
+                    <td>@ingredient.Unit</td>
+                    <td>@ingredient.Description</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning"
+                                @onclick='() => Nav.NavigateTo($"/ingredients/edit/{ingredient.Id}")'>
+                            ✏️
+                        </button>
+                        <button class="btn btn-sm btn-danger"
+                                @onclick="() => DeleteAsync(ingredient.Id)">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Ingredient>? ingredients;
+    private string searchTerm = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        ingredients = await IngredientService.GetAllAsync();
+    }
+
+    private async Task OnSearch()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            await LoadAsync();
+        else
+            ingredients = await IngredientService.SearchAsync(searchTerm);
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        await IngredientService.DeleteAsync(id);
+        await LoadAsync();
+    }
+}

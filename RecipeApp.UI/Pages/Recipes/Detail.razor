@@ -1,0 +1,130 @@
+﻿@page "/recipes/{Id:int}"
+@inject IRecipeService RecipeService
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+@if (recipe == null)
+{
+    <p>Chargement...</p>
+}
+else
+{
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>🍽️ @recipe.Title</h2>
+        <div>
+            <button class="btn btn-warning me-2"
+                    @onclick='() => Nav.NavigateTo($"/recipes/edit/{recipe.Id}")'>
+                ✏️ Modifier
+            </button>
+            <button class="btn btn-secondary"
+                    @onclick='() => Nav.NavigateTo("/recipes")'>
+                ← Retour
+            </button>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="text-muted">@recipe.Description</p>
+                    <hr />
+                    <div class="row text-center">
+                        <div class="col">
+                            <h6>Catégorie</h6>
+                            <span class="badge bg-primary fs-6">@recipe.Category</span>
+                        </div>
+                        <div class="col">
+                            <h6>Cuisine</h6>
+                            <span class="badge bg-secondary fs-6">@recipe.CuisineType</span>
+                        </div>
+                        <div class="col">
+                            <h6>👤 Personnes</h6>
+                            <strong>@recipe.Servings</strong>
+                        </div>
+                        <div class="col">
+                            <h6>⏱️ Préparation</h6>
+                            <strong>@recipe.PrepTimeMinutes min</strong>
+                        </div>
+                        <div class="col">
+                            <h6>📅 Créée le</h6>
+                            <strong>@recipe.CreatedAt.ToString("dd/MM/yyyy")</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calories -->
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center bg-light">
+                <div class="card-body">
+                    <h6>🔥 Calories totales</h6>
+                    <h2 class="text-danger">@totalCalories.ToString("F0")</h2>
+                    <p class="text-muted">kcal</p>
+                    <hr />
+                    <h6>🔥 Par personne</h6>
+                    <h3 class="text-warning">@caloriesPerPerson.ToString("F0")</h3>
+                    <p class="text-muted">kcal / pers.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des ingrédients -->
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">🥕 Ingrédients (@recipe.RecipeIngredients.Count)</h5>
+        </div>
+        <div class="card-body">
+            @if (!recipe.RecipeIngredients.Any())
+            {
+                <p class="text-muted">Aucun ingrédient ajouté.</p>
+            }
+            else
+            {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Ingrédient</th>
+                            <th>Quantité</th>
+                            <th>Unité</th>
+                            <th>Calories</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ri in recipe.RecipeIngredients)
+                        {
+                            <tr>
+                                <td>@ri.Ingredient?.Name</td>
+                                <td>@ri.Quantity</td>
+                                <td>@ri.Ingredient?.Unit</td>
+                                <td>@((ri.Quantity * (ri.Ingredient?.CaloriesPerUnit ?? 0)).ToString("F0")) kcal</td>
+                                <td>@ri.Notes</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Recipe? recipe;
+    private float totalCalories;
+    private float caloriesPerPerson;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        recipe = await RecipeService.GetByIdAsync(Id);
+        if (recipe != null)
+        {
+            totalCalories = await RecipeService.GetTotalCaloriesAsync(Id);
+            caloriesPerPerson = await RecipeService.GetCaloriesPerPersonAsync(Id);
+        }
+    }
+}

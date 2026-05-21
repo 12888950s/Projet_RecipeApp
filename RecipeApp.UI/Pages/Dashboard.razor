@@ -1,0 +1,143 @@
+﻿@page "/"
+@inject IAnalyticsService AnalyticsService
+@rendermode InteractiveServer
+
+<h2 class="mb-4">📊 Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm border-primary">
+            <div class="card-body">
+                <h6 class="text-muted">Total Recettes</h6>
+                <h2 class="text-primary">@totalRecipes</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm border-warning">
+            <div class="card-body">
+                <h6 class="text-muted">Moy. Calories Globale</h6>
+                <h2 class="text-warning">@globalAvgCalories.ToString("F0")</h2>
+                <small class="text-muted">kcal</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm border-danger">
+            <div class="card-body">
+                <h6 class="text-muted">Catégories</h6>
+                <h2 class="text-danger">@categoryCount</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm border-success">
+            <div class="card-body">
+                <h6 class="text-muted">Types de Cuisine</h6>
+                <h2 class="text-success">@cuisineCount</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Graphique par catégorie -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">🍽️ Recettes par Catégorie</div>
+            <div class="card-body">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <!-- Graphique par cuisine -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">🌍 Recettes par Type de Cuisine</div>
+            <div class="card-body">
+                <canvas id="cuisineChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Top recettes caloriques -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">🔥 Top 5 Recettes Caloriques</div>
+            <div class="card-body">
+                <canvas id="topCaloriesChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <!-- Calories moyennes par catégorie -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">📈 Calories Moyennes par Catégorie</div>
+            <div class="card-body">
+                <canvas id="avgCaloriesChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private int totalRecipes;
+    private float globalAvgCalories;
+    private int categoryCount;
+    private int cuisineCount;
+
+    private Dictionary<string, int> categoryData = new();
+    private Dictionary<string, int> cuisineData = new();
+    private List<(string Title, float Calories)> topCaloric = new();
+    private Dictionary<string, float> avgCaloriesByCategory = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var byCat = await AnalyticsService.GetRecipeCountByCategoryAsync();
+        var byCuisine = await AnalyticsService.GetRecipeCountByCuisineAsync();
+        var avgByCat = await AnalyticsService.GetAvgCaloriesByCategoryAsync();
+        topCaloric = await AnalyticsService.GetTopCaloricRecipesAsync(5);
+        globalAvgCalories = await AnalyticsService.GetGlobalAverageCaloriesAsync();
+
+        categoryData = byCat.ToDictionary(k => k.Key.ToString(), v => v.Value);
+        cuisineData = byCuisine.ToDictionary(k => k.Key.ToString(), v => v.Value);
+        avgCaloriesByCategory = avgByCat.ToDictionary(k => k.Key.ToString(), v => v.Value);
+
+        totalRecipes = categoryData.Values.Sum();
+        categoryCount = categoryData.Count;
+        cuisineCount = cuisineData.Count;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await RenderCharts();
+        }
+    }
+
+    private async Task RenderCharts()
+    {
+        var catLabels = categoryData.Keys.ToArray();
+        var catValues = categoryData.Values.ToArray();
+
+        var cuisineLabels = cuisineData.Keys.ToArray();
+        var cuisineValues = cuisineData.Values.ToArray();
+
+        var topLabels = topCaloric.Select(t => t.Title).ToArray();
+        var topValues = topCaloric.Select(t => t.Calories).ToArray();
+
+        var avgLabels = avgCaloriesByCategory.Keys.ToArray();
+        var avgValues = avgCaloriesByCategory.Values.ToArray();
+
+        await JS.InvokeVoidAsync("renderCharts",
+            catLabels, catValues,
+            cuisineLabels, cuisineValues,
+            topLabels, topValues,
+            avgLabels, avgValues);
+    }
+
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+}

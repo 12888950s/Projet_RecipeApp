@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "RecipeApp.UI": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:61437;http://localhost:61438"
+    }
+  }
+}

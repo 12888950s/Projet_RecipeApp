@@ -2940,33 +2940,39 @@
     ]
   },
   "packageFolders": {
-    "/home/ahmedboudriga/.nuget/packages/": {}
+    "C:\\Users\\souha\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/ahmedboudriga/Downloads/RecipeApp-main/RecipeApp.Services/RecipeApp.Services.csproj",
+      "projectUniqueName": "C:\\Projet_.net\\recipeApp\\RecipeApp.Services\\RecipeApp.Services.csproj",
       "projectName": "RecipeApp.Services",
-      "projectPath": "/home/ahmedboudriga/Downloads/RecipeApp-main/RecipeApp.Services/RecipeApp.Services.csproj",
-      "packagesPath": "/home/ahmedboudriga/.nuget/packages/",
-      "outputPath": "/home/ahmedboudriga/Downloads/RecipeApp-main/RecipeApp.Services/obj/",
+      "projectPath": "C:\\Projet_.net\\recipeApp\\RecipeApp.Services\\RecipeApp.Services.csproj",
+      "packagesPath": "C:\\Users\\souha\\.nuget\\packages\\",
+      "outputPath": "C:\\Projet_.net\\recipeApp\\RecipeApp.Services\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/home/ahmedboudriga/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\souha\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
-        "/usr/lib/dotnet/library-packs": {},
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "/home/ahmedboudriga/Downloads/RecipeApp-main/RecipeApp.Data/RecipeApp.Data.csproj": {
-              "projectPath": "/home/ahmedboudriga/Downloads/RecipeApp-main/RecipeApp.Data/RecipeApp.Data.csproj"
+            "C:\\Projet_.net\\recipeApp\\RecipeApp.Data\\RecipeApp.Data.csproj": {
+              "projectPath": "C:\\Projet_.net\\recipeApp\\RecipeApp.Data\\RecipeApp.Data.csproj"
             }
           }
         }
@@ -3008,7 +3014,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.104/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",
