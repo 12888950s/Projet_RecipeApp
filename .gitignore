@@ -15,4 +15,8 @@ x64/
 x86/
 
 # Logs
-*.logRecipeApp.UI/recipeapp.db 
+*.log
+
+# Database
+*.db
+RecipeApp.UI/recipeapp.db
