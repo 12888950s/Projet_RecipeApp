@@ -5,119 +5,174 @@
 @inject NavigationManager Nav
 @rendermode InteractiveServer
 
-<h2>@(Id == null ? "➕ Nouvelle recette" : "✏️ Modifier la recette")</h2>
-
-<EditForm Model="model" OnValidSubmit="SaveAsync">
-    <DataAnnotationsValidator />
-    <ValidationSummary class="alert alert-danger" />
-
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label>Titre</label>
-            <InputText class="form-control" @bind-Value="model.Title" />
-        </div>
-        <div class="col-md-3 mb-3">
-            <label>Personnes</label>
-            <InputNumber class="form-control" @bind-Value="model.Servings" />
-        </div>
-        <div class="col-md-3 mb-3">
-            <label>Temps (minutes)</label>
-            <InputNumber class="form-control" @bind-Value="model.PrepTimeMinutes" />
-        </div>
+<div class="page-title">
+    <div>
+        <h2>@(Id == null ? "➕ Nouvelle recette" : "✏️ Modifier la recette")</h2>
+        <p class="page-subtitle">
+            @(Id == null ? "Créer une nouvelle recette avec ses ingrédients." : "Modifier les informations de la recette sélectionnée.")
+        </p>
     </div>
+</div>
 
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label>Catégorie</label>
-            <InputSelect class="form-select" @bind-Value="model.Category">
-                @foreach (var cat in Enum.GetValues<Category>())
-                {
-                    <option value="@cat">@cat</option>
-                }
-            </InputSelect>
-        </div>
-        <div class="col-md-6 mb-3">
-            <label>Type de cuisine</label>
-            <InputSelect class="form-select" @bind-Value="model.CuisineType">
-                @foreach (var ct in Enum.GetValues<CuisineType>())
-                {
-                    <option value="@ct">@ct</option>
-                }
-            </InputSelect>
-        </div>
-    </div>
+<div class="form-card">
+    <EditForm Model="model" OnValidSubmit="SaveAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="alert alert-danger" />
 
-    <div class="mb-3">
-        <label>Description</label>
-        <InputTextArea class="form-control" @bind-Value="model.Description" rows="3" />
-    </div>
+        <h5 class="form-section-title">Informations générales</h5>
 
-    <!-- Sélection des ingrédients -->
-    <h5 class="mt-4">🥕 Ingrédients</h5>
-    <div class="row mb-2">
-        <div class="col-md-5">
-            <select class="form-select" @bind="selectedIngredientId">
-                <option value="0">-- Choisir un ingrédient --</option>
-                @foreach (var ing in allIngredients)
-                {
-                    <option value="@ing.Id">@ing.Name (@ing.Unit)</option>
-                }
-            </select>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Titre</label>
+                <InputText class="form-control"
+                           placeholder="Ex: Ojja tunisienne au poulet"
+                           @bind-Value="model.Title" />
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Personnes</label>
+                <InputNumber class="form-control"
+                             @bind-Value="model.Servings" />
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Temps</label>
+                <InputNumber class="form-control"
+                             placeholder="Minutes"
+                             @bind-Value="model.PrepTimeMinutes" />
+            </div>
         </div>
-        <div class="col-md-3">
-            <input type="number" class="form-control" placeholder="Quantité"
-                   @bind="selectedQuantity" min="0.01" step="0.01" />
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Catégorie</label>
+                <InputSelect class="form-select custom-select"
+                             @bind-Value="model.Category">
+                    @foreach (var cat in Enum.GetValues<Category>())
+                    {
+                        <option value="@cat">@cat</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Type de cuisine</label>
+                <InputSelect class="form-select custom-select"
+                             @bind-Value="model.CuisineType">
+                    @foreach (var ct in Enum.GetValues<CuisineType>())
+                    {
+                        <option value="@ct">@ct</option>
+                    }
+                </InputSelect>
+            </div>
         </div>
-        <div class="col-md-2">
-            <input type="text" class="form-control" placeholder="Notes (optionnel)"
-                   @bind="selectedNotes" />
+
+        <div class="mb-4">
+            <label class="form-label">Description</label>
+            <InputTextArea class="form-control"
+                           placeholder="Décrire brièvement la recette..."
+                           @bind-Value="model.Description"
+                           rows="4" />
         </div>
-        <div class="col-md-2">
-            <button type="button" class="btn btn-outline-primary w-100"
-                    @onclick="AddIngredient">
-                + Ajouter
+
+        <h5 class="form-section-title">🥕 Ingrédients</h5>
+
+        <div class="ingredient-add-box">
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <label class="form-label">Ingrédient</label>
+                    <select class="form-select custom-select" @bind="selectedIngredientId">
+                        <option value="0">-- Choisir un ingrédient --</option>
+                        @foreach (var ing in allIngredients)
+                        {
+                            <option value="@ing.Id">@ing.Name (@ing.Unit)</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Quantité</label>
+                    <input type="number"
+                           class="form-control"
+                           placeholder="Quantité"
+                           @bind="selectedQuantity"
+                           min="0.01"
+                           step="0.01" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Notes</label>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Optionnel"
+                           @bind="selectedNotes" />
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button"
+                            class="btn btn-outline-primary w-100"
+                            @onclick="AddIngredient">
+                        + Ajouter
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        @if (selectedIngredients.Any())
+        {
+            <div class="table-card mt-3">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Ingrédient</th>
+                            <th>Quantité</th>
+                            <th>Notes</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in selectedIngredients)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.IngredientName</strong>
+                                </td>
+                                <td>@item.Quantity @item.Unit</td>
+                                <td>@(string.IsNullOrWhiteSpace(item.Notes) ? "-" : item.Notes)</td>
+                                <td class="text-end">
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger"
+                                            @onclick="() => RemoveIngredient(item.IngredientId)">
+                                        🗑️ Supprimer
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state mt-3">
+                Aucun ingrédient sélectionné pour cette recette.
+            </div>
+        }
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+            <button class="btn btn-secondary"
+                    type="button"
+                    @onclick='() => Nav.NavigateTo("/recipes")'>
+                Annuler
+            </button>
+
+            <button class="btn btn-primary" type="submit">
+                💾 Enregistrer
             </button>
         </div>
-    </div>
-
-    @if (selectedIngredients.Any())
-    {
-        <table class="table table-sm table-bordered mt-2">
-            <thead>
-                <tr>
-                    <th>Ingrédient</th>
-                    <th>Quantité</th>
-                    <th>Notes</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in selectedIngredients)
-                {
-                    <tr>
-                        <td>@item.IngredientName</td>
-                        <td>@item.Quantity @item.Unit</td>
-                        <td>@item.Notes</td>
-                        <td>
-                            <button type="button" class="btn btn-sm btn-danger"
-                                    @onclick="() => RemoveIngredient(item.IngredientId)">
-                                🗑️
-                            </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-
-    <div class="mt-4">
-        <button class="btn btn-success" type="submit">💾 Enregistrer</button>
-        <button class="btn btn-secondary ms-2" type="button"
-                @onclick='() => Nav.NavigateTo("/recipes")'>
-            Annuler
-        </button>
-    </div>
-</EditForm>
+    </EditForm>
+</div>
 
 @code {
     [Parameter] public int? Id { get; set; }
@@ -125,7 +180,6 @@
     private Recipe model = new();
     private List<Ingredient> allIngredients = new();
 
-    // Ingrédients sélectionnés pour la recette
     private List<IngredientLine> selectedIngredients = new();
     private int selectedIngredientId = 0;
     private float selectedQuantity = 1;
@@ -138,10 +192,11 @@
         if (Id != null)
         {
             var existing = await RecipeService.GetByIdAsync(Id.Value);
+
             if (existing != null)
             {
                 model = existing;
-                // Charger les ingrédients existants
+
                 selectedIngredients = existing.RecipeIngredients.Select(ri => new IngredientLine
                 {
                     IngredientId = ri.IngredientId,
@@ -156,10 +211,14 @@
 
     private void AddIngredient()
     {
-        if (selectedIngredientId == 0 || selectedQuantity <= 0) return;
-        if (selectedIngredients.Any(i => i.IngredientId == selectedIngredientId)) return;
+        if (selectedIngredientId == 0 || selectedQuantity <= 0)
+            return;
+
+        if (selectedIngredients.Any(i => i.IngredientId == selectedIngredientId))
+            return;
 
         var ing = allIngredients.First(i => i.Id == selectedIngredientId);
+
         selectedIngredients.Add(new IngredientLine
         {
             IngredientId = ing.Id,
@@ -184,8 +243,16 @@
         if (Id == null)
         {
             var created = await RecipeService.CreateAsync(model);
+
             foreach (var item in selectedIngredients)
-                await RecipeService.AddIngredientAsync(created.Id, item.IngredientId, item.Quantity, item.Notes);
+            {
+                await RecipeService.AddIngredientAsync(
+                    created.Id,
+                    item.IngredientId,
+                    item.Quantity,
+                    item.Notes
+                );
+            }
         }
         else
         {
@@ -195,7 +262,6 @@
         Nav.NavigateTo("/recipes");
     }
 
-    // Classe locale pour gérer les lignes d'ingrédients
     private class IngredientLine
     {
         public int IngredientId { get; set; }

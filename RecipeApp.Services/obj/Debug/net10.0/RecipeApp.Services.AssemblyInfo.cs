@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RecipeApp.Services")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e869fb11c47bd466c260917a74afbd1908efc5bb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+209ef81f76b85dadd9b20ce37ef827b8ab8e3c4a")]
 [assembly: System.Reflection.AssemblyProductAttribute("RecipeApp.Services")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RecipeApp.Services")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,8 +1,28 @@
-﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 mb-4">
-    <a class="navbar-brand" href="/">🍽️ RecipeApp</a>
-    <div class="navbar-nav">
-        <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Dashboard</NavLink>
-        <NavLink class="nav-link" href="/recipes">Recettes</NavLink>
-        <NavLink class="nav-link" href="/ingredients">Ingrédients</NavLink>
+﻿<nav class="navbar navbar-expand-lg app-navbar">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand app-brand" href="/">
+            <span class="brand-icon">🍽️</span>
+            <span>RecipeApp</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <div class="navbar-nav ms-auto nav-links">
+                <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                    📊 Dashboard
+                </NavLink>
+
+                <NavLink class="nav-link" href="/recipes">
+                    🍲 Recettes
+                </NavLink>
+
+                <NavLink class="nav-link" href="/ingredients">
+                    🥕 Ingrédients
+                </NavLink>
+            </div>
+        </div>
     </div>
 </nav>

@@ -5,17 +5,26 @@
 
 @if (recipe == null)
 {
-    <p>Chargement...</p>
+    <div class="empty-state">
+        Chargement des détails de la recette...
+    </div>
 }
 else
 {
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>🍽️ @recipe.Title</h2>
+    <div class="page-title">
         <div>
-            <button class="btn btn-warning me-2"
+            <h2>🍽️ @recipe.Title</h2>
+            <p class="page-subtitle">
+                Détails complets de la recette, informations nutritionnelles et ingrédients utilisés.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-warning"
                     @onclick='() => Nav.NavigateTo($"/recipes/edit/{recipe.Id}")'>
                 ✏️ Modifier
             </button>
+
             <button class="btn btn-secondary"
                     @onclick='() => Nav.NavigateTo("/recipes")'>
                 ← Retour
@@ -23,91 +32,108 @@ else
         </div>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <p class="text-muted">@recipe.Description</p>
-                    <hr />
-                    <div class="row text-center">
-                        <div class="col">
-                            <h6>Catégorie</h6>
-                            <span class="badge bg-primary fs-6">@recipe.Category</span>
-                        </div>
-                        <div class="col">
-                            <h6>Cuisine</h6>
-                            <span class="badge bg-secondary fs-6">@recipe.CuisineType</span>
-                        </div>
-                        <div class="col">
-                            <h6>👤 Personnes</h6>
-                            <strong>@recipe.Servings</strong>
-                        </div>
-                        <div class="col">
-                            <h6>⏱️ Préparation</h6>
-                            <strong>@recipe.PrepTimeMinutes min</strong>
-                        </div>
-                        <div class="col">
-                            <h6>📅 Créée le</h6>
-                            <strong>@recipe.CreatedAt.ToString("dd/MM/yyyy")</strong>
-                        </div>
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <div class="detail-icon">🍲</div>
+                    <div>
+                        <h4>@recipe.Title</h4>
+                        <p>@recipe.Description</p>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="recipe-info-grid">
+                    <div class="info-box">
+                        <span class="info-label">Catégorie</span>
+                        <strong>@recipe.Category</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-label">Cuisine</span>
+                        <strong>@recipe.CuisineType</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-label">Personnes</span>
+                        <strong>👤 @recipe.Servings</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-label">Préparation</span>
+                        <strong>⏱️ @recipe.PrepTimeMinutes min</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-label">Créée le</span>
+                        <strong>📅 @recipe.CreatedAt.ToString("dd/MM/yyyy")</strong>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Calories -->
-        <div class="col-md-4">
-            <div class="card shadow-sm text-center bg-light">
-                <div class="card-body">
-                    <h6>🔥 Calories totales</h6>
-                    <h2 class="text-danger">@totalCalories.ToString("F0")</h2>
-                    <p class="text-muted">kcal</p>
-                    <hr />
-                    <h6>🔥 Par personne</h6>
-                    <h3 class="text-warning">@caloriesPerPerson.ToString("F0")</h3>
-                    <p class="text-muted">kcal / pers.</p>
-                </div>
+        <div class="col-lg-4">
+            <div class="calorie-card">
+                <div class="calorie-icon">🔥</div>
+
+                <p class="calorie-label">Calories totales</p>
+                <h2>@totalCalories.ToString("F0")</h2>
+                <span>kcal</span>
+
+                <hr />
+
+                <p class="calorie-label">Calories par personne</p>
+                <h3>@caloriesPerPerson.ToString("F0")</h3>
+                <span>kcal / pers.</span>
             </div>
         </div>
     </div>
 
-    <!-- Liste des ingrédients -->
-    <div class="card shadow-sm">
+    <div class="table-card">
         <div class="card-header">
-            <h5 class="mb-0">🥕 Ingrédients (@recipe.RecipeIngredients.Count)</h5>
+            🥕 Ingrédients (@recipe.RecipeIngredients.Count)
         </div>
-        <div class="card-body">
-            @if (!recipe.RecipeIngredients.Any())
-            {
-                <p class="text-muted">Aucun ingrédient ajouté.</p>
-            }
-            else
-            {
-                <table class="table table-striped">
-                    <thead>
+
+        @if (!recipe.RecipeIngredients.Any())
+        {
+            <div class="empty-state">
+                Aucun ingrédient ajouté pour cette recette.
+            </div>
+        }
+        else
+        {
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Ingrédient</th>
+                        <th>Quantité</th>
+                        <th>Unité</th>
+                        <th>Calories</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ri in recipe.RecipeIngredients)
+                    {
                         <tr>
-                            <th>Ingrédient</th>
-                            <th>Quantité</th>
-                            <th>Unité</th>
-                            <th>Calories</th>
-                            <th>Notes</th>
+                            <td>
+                                <strong>@ri.Ingredient?.Name</strong>
+                            </td>
+                            <td>@ri.Quantity</td>
+                            <td>@ri.Ingredient?.Unit</td>
+                            <td>
+                                <span class="text-danger fw-bold">
+                                    @((ri.Quantity * (ri.Ingredient?.CaloriesPerUnit ?? 0)).ToString("F0")) kcal
+                                </span>
+                            </td>
+                            <td>@(string.IsNullOrWhiteSpace(ri.Notes) ? "-" : ri.Notes)</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var ri in recipe.RecipeIngredients)
-                        {
-                            <tr>
-                                <td>@ri.Ingredient?.Name</td>
-                                <td>@ri.Quantity</td>
-                                <td>@ri.Ingredient?.Unit</td>
-                                <td>@((ri.Quantity * (ri.Ingredient?.CaloriesPerUnit ?? 0)).ToString("F0")) kcal</td>
-                                <td>@ri.Notes</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        </div>
+                    }
+                </tbody>
+            </table>
+        }
     </div>
 }
 
@@ -121,6 +147,7 @@ else
     protected override async Task OnParametersSetAsync()
     {
         recipe = await RecipeService.GetByIdAsync(Id);
+
         if (recipe != null)
         {
             totalCalories = await RecipeService.GetTotalCaloriesAsync(Id);

@@ -3,60 +3,76 @@
 @inject NavigationManager Nav
 @rendermode InteractiveServer
 
-<h2>🥕 Ingrédients</h2>
+<div class="page-title">
+    <div>
+        <h2>🥕 Ingrédients</h2>
+        <p class="page-subtitle">Gérer la liste des ingrédients utilisés dans les recettes.</p>
+    </div>
 
-<!-- Barre de recherche -->
-<div style="display:flex; gap:10px; margin-bottom:20px;">
-    <input class="form-control" placeholder="Rechercher un ingrédient..."
-           @bind="searchTerm" @bind:event="oninput" @onkeyup="OnSearch" />
     <button class="btn btn-primary" @onclick='() => Nav.NavigateTo("/ingredients/create")'>
-        + Ajouter
+        + Ajouter un ingrédient
     </button>
 </div>
 
-<!-- Table -->
+<div class="search-bar">
+    <input class="form-control"
+           placeholder="Rechercher un ingrédient par nom..."
+           @bind="searchTerm"
+           @bind:event="oninput"
+           @onkeyup="OnSearch" />
+</div>
+
 @if (ingredients == null)
 {
-    <p>Chargement...</p>
+    <div class="empty-state">
+        Chargement des ingrédients...
+    </div>
 }
 else if (!ingredients.Any())
 {
-    <p>Aucun ingrédient trouvé.</p>
+    <div class="empty-state">
+        Aucun ingrédient trouvé.
+    </div>
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Calories/Unité</th>
-                <th>Unité</th>
-                <th>Description</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var ingredient in ingredients)
-            {
+    <div class="table-card">
+        <table class="table table-hover">
+            <thead>
                 <tr>
-                    <td>@ingredient.Name</td>
-                    <td>@ingredient.CaloriesPerUnit</td>
-                    <td>@ingredient.Unit</td>
-                    <td>@ingredient.Description</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning"
-                                @onclick='() => Nav.NavigateTo($"/ingredients/edit/{ingredient.Id}")'>
-                            ✏️
-                        </button>
-                        <button class="btn btn-sm btn-danger"
-                                @onclick="() => DeleteAsync(ingredient.Id)">
-                            🗑️
-                        </button>
-                    </td>
+                    <th>Nom</th>
+                    <th>Calories / Unité</th>
+                    <th>Unité</th>
+                    <th>Description</th>
+                    <th class="text-end">Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var ingredient in ingredients)
+                {
+                    <tr>
+                        <td>
+                            <strong>@ingredient.Name</strong>
+                        </td>
+                        <td>@ingredient.CaloriesPerUnit kcal</td>
+                        <td>@ingredient.Unit</td>
+                        <td>@ingredient.Description</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-warning me-1"
+                                    @onclick='() => Nav.NavigateTo($"/ingredients/edit/{ingredient.Id}")'>
+                                ✏️ Modifier
+                            </button>
+
+                            <button class="btn btn-sm btn-danger"
+                                    @onclick="() => DeleteAsync(ingredient.Id)">
+                                🗑️ Supprimer
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 
 @code {

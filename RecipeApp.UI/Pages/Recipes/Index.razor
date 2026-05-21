@@ -3,49 +3,82 @@
 @inject NavigationManager Nav
 @rendermode InteractiveServer
 
-<h2>🍽️ Recettes</h2>
+<div class="page-title">
+    <div>
+        <h2>🍽️ Recettes</h2>
+        <p class="page-subtitle">
+            Consultez, recherchez et gérez toutes les recettes enregistrées.
+        </p>
+    </div>
 
-<div style="display:flex; gap:10px; margin-bottom:20px;">
-    <input class="form-control" placeholder="Rechercher une recette..."
-           @bind="searchTerm" @bind:event="oninput" @onkeyup="OnSearch" />
     <button class="btn btn-primary" @onclick='() => Nav.NavigateTo("/recipes/create")'>
-        + Ajouter
+        + Ajouter une recette
     </button>
+</div>
+
+<div class="search-bar">
+    <input class="form-control"
+           placeholder="Rechercher une recette..."
+           @bind="searchTerm"
+           @bind:event="oninput"
+           @onkeyup="OnSearch" />
 </div>
 
 @if (recipes == null)
 {
-    <p>Chargement...</p>
+    <div class="empty-state">
+        Chargement des recettes...
+    </div>
 }
 else if (!recipes.Any())
 {
-    <p>Aucune recette trouvée.</p>
+    <div class="empty-state">
+        Aucune recette trouvée.
+    </div>
 }
 else
 {
-    <div class="row">
+    <div class="row g-4">
         @foreach (var recipe in recipes)
         {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">@recipe.Title</h5>
-                        <p class="card-text text-muted">@recipe.Description</p>
-                        <span class="badge bg-primary me-1">@recipe.Category</span>
-                        <span class="badge bg-secondary">@recipe.CuisineType</span>
+            <div class="col-lg-4 col-md-6">
+                <div class="recipe-card h-100">
+                    <div class="recipe-card-body">
+                        <div class="recipe-icon">🍲</div>
+
+                        <h5 class="recipe-title">@recipe.Title</h5>
+
+                        <p class="recipe-description">
+                            @recipe.Description
+                        </p>
+
+                        <div class="recipe-badges">
+                            <span class="badge recipe-badge-primary">@recipe.Category</span>
+                            <span class="badge recipe-badge-secondary">@recipe.CuisineType</span>
+                        </div>
                     </div>
-                    <div class="card-footer d-flex justify-content-between">
-                        <small>👤 @recipe.Servings pers. | ⏱️ @recipe.PrepTimeMinutes min</small>
-                        <div>
+
+                    <div class="recipe-card-footer">
+                        <div class="recipe-meta">
+                            <span>👤 @recipe.Servings pers.</span>
+                            <span>⏱️ @recipe.PrepTimeMinutes min</span>
+                        </div>
+
+                        <div class="recipe-actions">
                             <button class="btn btn-sm btn-info"
+                                    title="Voir détails"
                                     @onclick='() => Nav.NavigateTo($"/recipes/{recipe.Id}")'>
                                 👁️
                             </button>
+
                             <button class="btn btn-sm btn-warning"
+                                    title="Modifier"
                                     @onclick='() => Nav.NavigateTo($"/recipes/edit/{recipe.Id}")'>
                                 ✏️
                             </button>
+
                             <button class="btn btn-sm btn-danger"
+                                    title="Supprimer"
                                     @onclick="() => DeleteAsync(recipe.Id)">
                                 🗑️
                             </button>

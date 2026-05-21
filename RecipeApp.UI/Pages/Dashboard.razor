@@ -2,87 +2,122 @@
 @inject IAnalyticsService AnalyticsService
 @rendermode InteractiveServer
 
-<h2 class="mb-4">📊 Dashboard</h2>
+<div class="page-title">
+    <div>
+        <h2>📊 Dashboard</h2>
+        <p class="page-subtitle">
+            Vue globale des recettes, catégories, cuisines et statistiques nutritionnelles.
+        </p>
+    </div>
+</div>
 
-<div class="row mb-4">
+<div class="row g-4 mb-4">
     <div class="col-md-3">
-        <div class="card text-center shadow-sm border-primary">
-            <div class="card-body">
-                <h6 class="text-muted">Total Recettes</h6>
-                <h2 class="text-primary">@totalRecipes</h2>
+        <div class="stat-card stat-primary">
+            <div class="stat-icon">🍽️</div>
+            <div>
+                <p class="stat-label">Total Recettes</p>
+                <h3>@totalRecipes</h3>
+                <span class="stat-note">recettes enregistrées</span>
             </div>
         </div>
     </div>
+
     <div class="col-md-3">
-        <div class="card text-center shadow-sm border-warning">
-            <div class="card-body">
-                <h6 class="text-muted">Moy. Calories Globale</h6>
-                <h2 class="text-warning">@globalAvgCalories.ToString("F0")</h2>
-                <small class="text-muted">kcal</small>
+        <div class="stat-card stat-warning">
+            <div class="stat-icon">🔥</div>
+            <div>
+                <p class="stat-label">Calories Moyennes</p>
+                <h3>@globalAvgCalories.ToString("F0")</h3>
+                <span class="stat-note">kcal par recette</span>
             </div>
         </div>
     </div>
+
     <div class="col-md-3">
-        <div class="card text-center shadow-sm border-danger">
-            <div class="card-body">
-                <h6 class="text-muted">Catégories</h6>
-                <h2 class="text-danger">@categoryCount</h2>
+        <div class="stat-card stat-danger">
+            <div class="stat-icon">🏷️</div>
+            <div>
+                <p class="stat-label">Catégories</p>
+                <h3>@categoryCount</h3>
+                <span class="stat-note">types de repas</span>
             </div>
         </div>
     </div>
+
     <div class="col-md-3">
-        <div class="card text-center shadow-sm border-success">
-            <div class="card-body">
-                <h6 class="text-muted">Types de Cuisine</h6>
-                <h2 class="text-success">@cuisineCount</h2>
+        <div class="stat-card stat-success">
+            <div class="stat-icon">🌍</div>
+            <div>
+                <p class="stat-label">Types de Cuisine</p>
+                <h3>@cuisineCount</h3>
+                <span class="stat-note">cuisines différentes</span>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row mb-4">
-    <!-- Graphique par catégorie -->
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header">🍽️ Recettes par Catégorie</div>
-            <div class="card-body">
-                <canvas id="categoryChart"></canvas>
+@if (isLoading)
+{
+    <div class="empty-state">
+        Chargement des statistiques...
+    </div>
+}
+else
+{
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header">
+                    🍽️ Recettes par Catégorie
+                </div>
+                <div class="card-body">
+                    <canvas id="categoryChart"></canvas>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- Graphique par cuisine -->
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header">🌍 Recettes par Type de Cuisine</div>
-            <div class="card-body">
-                <canvas id="cuisineChart"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="row">
-    <!-- Top recettes caloriques -->
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header">🔥 Top 5 Recettes Caloriques</div>
-            <div class="card-body">
-                <canvas id="topCaloriesChart"></canvas>
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header">
+                    🌍 Recettes par Type de Cuisine
+                </div>
+                <div class="card-body">
+                    <canvas id="cuisineChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
-    <!-- Calories moyennes par catégorie -->
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header">📈 Calories Moyennes par Catégorie</div>
-            <div class="card-body">
-                <canvas id="avgCaloriesChart"></canvas>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header">
+                    🔥 Top 5 Recettes Caloriques
+                </div>
+                <div class="card-body">
+                    <canvas id="topCaloriesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header">
+                    📈 Calories Moyennes par Catégorie
+                </div>
+                <div class="card-body">
+                    <canvas id="avgCaloriesChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
 
 @code {
+    private bool isLoading = true;
+    private bool chartsRendered = false;
+
     private int totalRecipes;
     private float globalAvgCalories;
     private int categoryCount;
@@ -98,6 +133,7 @@
         var byCat = await AnalyticsService.GetRecipeCountByCategoryAsync();
         var byCuisine = await AnalyticsService.GetRecipeCountByCuisineAsync();
         var avgByCat = await AnalyticsService.GetAvgCaloriesByCategoryAsync();
+
         topCaloric = await AnalyticsService.GetTopCaloricRecipesAsync(5);
         globalAvgCalories = await AnalyticsService.GetGlobalAverageCaloriesAsync();
 
@@ -108,12 +144,15 @@
         totalRecipes = categoryData.Values.Sum();
         categoryCount = categoryData.Count;
         cuisineCount = cuisineData.Count;
+
+        isLoading = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (!isLoading && !chartsRendered)
         {
+            chartsRendered = true;
             await RenderCharts();
         }
     }
